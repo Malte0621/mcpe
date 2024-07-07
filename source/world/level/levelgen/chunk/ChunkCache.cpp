@@ -15,8 +15,10 @@ ChunkCache::ChunkCache(Level* pLevel, ChunkStorage* pStor, ChunkSource* pSrc)
 	field_4 = true;
 	m_pLevel = nullptr;
 	m_pLastChunk = nullptr;
-	m_LastChunkX = -999999999;
-	m_LastChunkZ = -999999999;
+	m_lastChunkX = -999999999;
+	m_lastChunkZ = -999999999;
+	m_chunkOverX = 0;
+	m_chunkOverZ = 0;
 
 	m_pChunkSource = pSrc;
 	m_pChunkStorage = pStor;
@@ -36,30 +38,36 @@ LevelChunk* ChunkCache::create(int x, int z)
 LevelChunk* ChunkCache::getChunk(int x, int z)
 {
 	// get the last chunk quickly if needed
-	if (m_LastChunkX == x && m_LastChunkZ == z)
-	{
-		if (m_pLastChunk)
-			return m_pLastChunk;
-	}
+	if (m_lastChunkX == x && m_lastChunkZ == z && m_pLastChunk)
+		return m_pLastChunk;
 
-	if (x < 0 || z < 0 || x >= C_MAX_CHUNKS_Z || z >= C_MAX_CHUNKS_X)
+	if (!m_pLevel->m_bCalculatingInitialSpawn && !mayHaveChunk(x, z))
 		return m_pEmptyChunk;
+
+	int ix = x & (C_LOADED_CHUNKS_MAX - 1);
+	int iz = z & (C_LOADED_CHUNKS_MAX - 1);
 
 	if (!hasChunk(x, z))
 	{
-		LevelChunk* pOldChunk = m_chunkMap[z][x];
+		LevelChunk* pOldChunk = m_chunkMap[iz][ix];
 		if (pOldChunk)
 		{
+			m_chunkMap[iz][ix] = nullptr;
 			pOldChunk->unload();
 			save(pOldChunk);
 			if (m_pChunkStorage)
 				m_pChunkStorage->saveEntities(m_pLevel, pOldChunk);
+
+			if (pOldChunk != m_pEmptyChunk) {
+				pOldChunk->deleteBlockData();
+				delete pOldChunk;
+			}
 		}
 
 		LevelChunk* pChunk = load(x, z);
 		if (pChunk)
 		{
-			m_chunkMap[z][x] = pChunk;
+			m_chunkMap[iz][ix] = pChunk;
 			pChunk->lightLava();
 
 			int globalX = x * 16, globalZ = z * 16;
@@ -82,18 +90,19 @@ LevelChunk* ChunkCache::getChunk(int x, int z)
 		else
 		{
 			pChunk = m_pEmptyChunk;
-			if (m_pChunkSource)
+			if (m_pChunkSource) {
 				pChunk = m_pChunkSource->getChunk(x, z);
+				pChunk->lightLava();
+			}
 
-			m_chunkMap[z][x] = pChunk;
-			pChunk->lightLava();
+			m_chunkMap[iz][ix] = pChunk;
 		}
 
-		pChunk = m_chunkMap[z][x];
+		pChunk = m_chunkMap[iz][ix];
 		if (pChunk)
 			pChunk->load();
 
-		if (!pChunk->field_234 && hasChunk(x + 1, z + 1) && hasChunk(x, z + 1) && hasChunk(x + 1, z))
+		if (hasChunk(x, z) && !getChunk(x, z)->field_234 && hasChunk(x + 1, z + 1) && hasChunk(x, z + 1) && hasChunk(x + 1, z))
 			postProcess(this, x, z);
 
 		//@OVERSIGHT: redundant call twice to hasChunk(x-1, z), hasChunk(x,z-1), and hasChunk(x-1,z-1)
@@ -107,27 +116,27 @@ LevelChunk* ChunkCache::getChunk(int x, int z)
 			postProcess(this, x - 1, z - 1);
 	}
 
-	m_LastChunkX = x;
-	m_LastChunkZ = z;
-	m_pLastChunk = m_chunkMap[z][x];
-	return m_chunkMap[z][x];
+	m_lastChunkX = x;
+	m_lastChunkZ = z;
+	m_pLastChunk = m_chunkMap[iz][ix];
+	return m_chunkMap[iz][ix];
 }
 
 LevelChunk* ChunkCache::getChunkDontCreate(int x, int z)
 {
 	// get the last chunk quickly if needed
-	if (m_LastChunkX == x && m_LastChunkZ == z)
-	{
-		if (m_pLastChunk)
-			return m_pLastChunk;
-	}
+	if (m_lastChunkX == x && m_lastChunkZ == z && m_pLastChunk)
+		return m_pLastChunk;
 
-	if (x < 0 || z < 0 || x >= C_MAX_CHUNKS_Z || z >= C_MAX_CHUNKS_X)
+	if (!m_pLevel->m_bCalculatingInitialSpawn && !mayHaveChunk(x, z))
 		return m_pEmptyChunk;
+
+	int ix = x & (C_LOADED_CHUNKS_MAX - 1);
+	int iz = z & (C_LOADED_CHUNKS_MAX - 1);
 
 	if (!hasChunk(x, z))
 	{
-		LevelChunk* pOldChunk = m_chunkMap[z][x];
+		LevelChunk* pOldChunk = m_chunkMap[iz][ix];
 		if (pOldChunk)
 		{
 			pOldChunk->unload();
@@ -141,34 +150,43 @@ LevelChunk* ChunkCache::getChunkDontCreate(int x, int z)
 		if (m_pChunkSource)
 			pChunk = m_pChunkSource->getChunkDontCreate(x, z);
 
-		m_chunkMap[z][x] = pChunk;
+		m_chunkMap[iz][ix] = pChunk;
 	}
 
-	m_LastChunkX = x;
-	m_LastChunkZ = z;
-	m_pLastChunk = m_chunkMap[z][x];
-	return m_chunkMap[z][x];
+	m_lastChunkX = x;
+	m_lastChunkZ = z;
+	m_pLastChunk = m_chunkMap[iz][ix];
+	return m_chunkMap[iz][ix];
+}
+
+bool ChunkCache::mayHaveChunk(int x, int z)
+{
+	const int radius = C_LOADED_CHUNKS_MAX / 2;
+
+	return
+		x >= m_chunkOverX - radius &&
+		z >= m_chunkOverZ - radius &&
+		x <= m_chunkOverX + radius &&
+		z <= m_chunkOverZ + radius;
 }
 
 bool ChunkCache::hasChunk(int x, int z)
 {
-	if (x < 0 || z < 0)
-		return true;
-
-	if (x >= C_MAX_CHUNKS_X || z >= C_MAX_CHUNKS_Z)
-		return true;
-
-	if (m_LastChunkX == x && m_LastChunkZ == z)
-		return true;
-
-	LevelChunk* pChunk = m_chunkMap[z][x];
-	if (!pChunk)
+	if (!mayHaveChunk(x, z))
 		return false;
 
-	if (pChunk == m_pEmptyChunk)
+	if (m_lastChunkX == x && m_lastChunkZ == z && m_pLastChunk)
 		return true;
 
-	return pChunk->isAt(x, z);
+	int ix = x & (C_LOADED_CHUNKS_MAX - 1);
+	int iz = z & (C_LOADED_CHUNKS_MAX - 1);
+	if (!m_chunkMap[iz][ix])
+		return false;
+
+	if (m_chunkMap[iz][ix] == m_pEmptyChunk)
+		return true;
+
+	return m_chunkMap[iz][ix]->isAt(x, z);
 }
 
 int ChunkCache::tick()
@@ -181,9 +199,6 @@ int ChunkCache::tick()
 
 void ChunkCache::postProcess(ChunkSource* pChkSrc, int x, int z)
 {
-	if (x < 0 || z < 0 || x >= C_MAX_CHUNKS_X || z >= C_MAX_CHUNKS_Z)
-		return;
-
 	LevelChunk* pChunk = getChunk(x, z);
 	if (!pChunk->field_234)
 	{
@@ -198,6 +213,7 @@ void ChunkCache::postProcess(ChunkSource* pChkSrc, int x, int z)
 
 void ChunkCache::save(LevelChunk* pChunk)
 {
+	return; // TODO
 	if (m_pChunkStorage)
 	{
 		pChunk->field_23C = m_pLevel->getTime();
@@ -227,6 +243,7 @@ void ChunkCache::saveAll()
 void ChunkCache::saveUnsaved()
 {
 	if (!m_pChunkStorage) return;
+	return; // TODO
 
 	std::vector<LevelChunk*> chunksToSave;
 
@@ -247,6 +264,12 @@ void ChunkCache::saveUnsaved()
 
 #endif
 
+void ChunkCache::setChunkOver(int x, int z)
+{
+	m_chunkOverX = x;
+	m_chunkOverZ = z;
+}
+
 bool ChunkCache::shouldSave()
 {
 	return true;
@@ -259,19 +282,23 @@ std::string ChunkCache::gatherStats()
 
 ChunkCache::~ChunkCache()
 {
-	SAFE_DELETE(m_pChunkSource);
-	SAFE_DELETE(m_pEmptyChunk);
-
-	for (int i = 0; i < C_MAX_CHUNKS_Z; i++)
-		for (int j = 0; j < C_MAX_CHUNKS_X; j++)
+	for (int i = 0; i < C_LOADED_CHUNKS_MAX; i++)
+	{
+		for (int j = 0; j < C_LOADED_CHUNKS_MAX; j++)
 		{
 			LevelChunk* pChk = m_chunkMap[i][j];
+			assert(pChk != m_pEmptyChunk);
+
 			if (pChk)
 			{
 				pChk->deleteBlockData();
 				SAFE_DELETE(pChk);
 			}
 		}
+	}
+
+	SAFE_DELETE(m_pChunkSource);
+	SAFE_DELETE(m_pEmptyChunk);
 }
 
 LevelChunk* ChunkCache::load(int x, int z)
@@ -279,8 +306,7 @@ LevelChunk* ChunkCache::load(int x, int z)
 	if (!m_pChunkStorage)
 		return m_pEmptyChunk;
 
-	if (x < 0 || z < 0 || x >= C_MAX_CHUNKS_X || z >= C_MAX_CHUNKS_Z)
-		return m_pEmptyChunk;
+	return nullptr; // TODO
 
 	LevelChunk* pChk = m_pChunkStorage->load(m_pLevel, x, z);
 	if (pChk)
