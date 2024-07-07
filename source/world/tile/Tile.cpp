@@ -490,7 +490,8 @@ void Tile::initTiles()
 	Tile::torch = (new TorchTile(TILE_TORCH, TEXTURE_TORCH_LIT, Material::decoration))
 		->init()
 		->setDestroyTime(0.0f)
-		->setLightEmission(15.0f / 16.0f)
+		//->setLightEmission(15.0f / 16.0f)
+		->setLightEmission(2.0f)
 		->setSoundType(Tile::SOUND_WOOD)
 		->setDescriptionId("torch");
 
@@ -1052,7 +1053,6 @@ void Tile::spawnResources(Level* pLevel, int x, int y, int z, int data, float fC
 	if (pLevel->m_bIsMultiplayer)
 		return;
 
-#ifdef TEST_SURVIVAL_MODE
 	int count = getResourceCount(&pLevel->m_random);
 	for (int i = 0; i < count; i++)
 	{
@@ -1073,7 +1073,6 @@ void Tile::spawnResources(Level* pLevel, int x, int y, int z, int data, float fC
 
 		pLevel->addEntity(pEntity);
 	}
-#endif
 }
 
 int Tile::spawnBurnResources(Level*, float, float, float)

@@ -464,6 +464,7 @@
     <ClInclude Include="$(MC_ROOT)\source\world\entity\Creeper.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\world\entity\Pig.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\world\entity\Rocket.hpp" />
+    <ClInclude Include="..\..\..\..\source\world\gamemode\GameType.hpp" />
     <ClInclude Include="..\..\..\..\source\world\item\RepeaterItem.hpp" />
     <ClInclude Include="..\..\..\..\source\world\tile\ButtonTile.hpp" />
     <ClInclude Include="..\..\..\..\source\world\tile\DiodeTile.hpp" />

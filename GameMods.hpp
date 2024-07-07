@@ -22,12 +22,11 @@
 //#define MOD_POPOUT_CONSOLE         // Open a separate console aside from the game window. By default only the debugger can see our logs. Win32 Debug only.
 
 // Tests
-//#define TEST_DROPPED_ITEMS      // Allow dropped items to be dropped and collected.
-//#define TEST_SURVIVAL_MODE      // Test survival mode.
+#define TEST_DROPPED_ITEMS      // Allow dropped items to be dropped and collected.
 #define TEST_TOUCH_SCREEN       // Test touch screen controls. The mouse will simulate one touch finger.
 
 // Enhancements
-//#define ENH_ENTITY_SHADING      // Allows shading of entities -- Currently we are abandoning this. Want to add normal support
+#define ENH_ENTITY_SHADING      // Allows shading of entities -- Currently we are abandoning this. Want to add normal support
 #define ENH_SHADE_HELD_TILES    // Allows shading of the item in hand
 #define ENH_FIX_INVIS_STAIRS    // Fixes a bug wherein a 16x16x16 chunk in the world that contains only stairs is invisible
 #define ENH_ALLOW_AO            // Allows using the F4 key to toggle ambient occlusion (buggy)
@@ -40,7 +39,7 @@
 #define ENH_EXTRA_ITEMS_IN_INV  // Add extra items in a new 5th row in the inventory.
 #define ENH_HIGHLIGHT_BY_HOVER  // Highlight buttons by hovering them instead of the usual way.
 #define ENH_ALLOW_SAND_GRAVITY  // Allow sand to fall.
-#define ENH_USE_GUI_SCALE_2     // Use a 2x GUI scale instead of 3x. Looks better on PC
+//#define ENH_USE_GUI_SCALE_2     // Use a 2x GUI scale instead of 3x. Looks better on PC
 #define ENH_ALLOW_SCROLL_WHEEL  // Allow use of the scroll wheel to change selected inventory slots
 #define ENH_3D_INVENTORY_TILES  // Uses 3D rendered inventory tiles, use with ENH_SHADE_HELD_TILES to render correctly.
 #define ENH_IMPROVED_SAVING     // Improve world saving. The original Minecraft doesn't always really save for some reason

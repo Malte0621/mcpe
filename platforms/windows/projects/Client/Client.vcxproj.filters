@@ -437,6 +437,12 @@
     <ClInclude Include="$(MC_ROOT)\source\client\renderer\entity\RocketRenderer.hpp">
       <Filter>Header Files\Renderer\Entity</Filter>
     </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\client\gui\screens\ArmorScreen.hpp">
+      <Filter>Header Files\GUI\Screens</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\source\client\gui\components\CustomButton.hpp">
+      <Filter>Header Files\GUI\Components</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MC_ROOT)\source\client\gui\components\AvailableGamesList.cpp">
@@ -789,6 +795,12 @@
     </ClCompile>
     <ClCompile Include="$(MC_ROOT)\source\client\renderer\entity\RocketRenderer.cpp">
       <Filter>Source Files\Renderer\Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\client\gui\screens\ArmorScreen.cpp">
+      <Filter>Source Files\GUI\Screens</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\client\gui\components\CustomButton.cpp">
+      <Filter>Source Files\GUI\Components</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

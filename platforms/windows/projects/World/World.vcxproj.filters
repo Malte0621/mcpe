@@ -832,5 +832,8 @@
     <ClInclude Include="..\..\..\..\source\world\item\RepeaterItem.hpp">
       <Filter>Header Files\Item</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\..\source\world\gamemode\GameType.hpp">
+      <Filter>Header Files\GameMode</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

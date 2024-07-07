@@ -103,7 +103,7 @@ void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, LoginPacke
 		return;
 	}
 
-	Player* pPlayer = new Player(m_pLevel);
+	Player* pPlayer = new Player(m_pLevel, m_pLevel->getLevelData()->getGameType());
 	pPlayer->m_guid = guid;
 	pPlayer->m_name = std::string(packet->m_str.C_String());
 
@@ -118,6 +118,7 @@ void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, LoginPacke
 	sgp.field_18 = pPlayer->m_pos.z;
 	sgp.m_version = 2;
 	sgp.m_time = m_pLevel->getTime();
+	sgp.m_gameType = pPlayer->m_playerGameType;
 	
 	RakNet::BitStream sgpbs;
 	sgp.write(&sgpbs);
@@ -404,6 +405,38 @@ void ServerSideNetworkHandler::setupCommands()
 	m_commands["time"]  = &ServerSideNetworkHandler::commandTime;
 	m_commands["seed"]  = &ServerSideNetworkHandler::commandSeed;
 	m_commands["tp"]    = &ServerSideNetworkHandler::commandTP;
+	m_commands["give"] = &ServerSideNetworkHandler::commandGIVE;
+}
+
+#include <common/Utils.hpp>
+
+void ServerSideNetworkHandler::commandGIVE(OnlinePlayer* player, const std::vector<std::string>& params)
+{
+	static bool PrintWarning = false;
+
+	if (PrintWarning == false)
+	{
+		PrintWarning = true; sendMessage(player, "safe ID's are to 24 index further can be crash because of missing blocks!");
+	}
+	if (player && m_pLevel && !params.empty())
+	{
+		int id = atoi(params[0].c_str());
+		int amount = 1;
+		if (params.size() > 1)
+		{
+			amount = atoi(params[1].c_str());
+		}
+
+		if (eTileID::ITEM_ROCKET < id || eTileID::TILE_AIR > id)
+		{
+			sendMessage(player, "Invalid ID");
+		}
+		ItemInstance itm(id, amount, 0);
+		player->m_pPlayer->m_pInventory->addItem(&itm);
+	}
+	else {
+		sendMessage(player, "Requires atleast 1 argument");
+	}
 }
 
 void ServerSideNetworkHandler::commandHelp(OnlinePlayer* player, const std::vector<std::string>& parms)

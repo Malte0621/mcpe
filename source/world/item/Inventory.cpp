@@ -100,6 +100,7 @@ void Inventory::prepareSurvivalInventory()
 	m_items.resize(C_NUM_SURVIVAL_SLOTS);
 
 	// Add some items for testing
+	/*
 	addTestItem(Item::stick->m_itemID, 64);
 	addTestItem(Item::wheat->m_itemID, 64);
 	addTestItem(Item::sugar->m_itemID, 64);
@@ -107,6 +108,7 @@ void Inventory::prepareSurvivalInventory()
 	addTestItem(Tile::ladder->m_ID, 64);
 	addTestItem(Tile::obsidian->m_ID, 64);
 	addTestItem(Tile::fire->m_ID, 64);
+	*/
 
 	for (int i = 0; i < C_MAX_HOTBAR_ITEMS; i++)
 		m_hotbar[i] = i;

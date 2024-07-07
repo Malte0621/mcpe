@@ -759,9 +759,7 @@ bool Mob::isBaby()
 
 void Mob::actuallyHurt(int damage)
 {
-#ifdef TEST_SURVIVAL_MODE
 	m_health -= damage;
-#endif
 }
 
 bool Mob::removeWhenFarAway()
