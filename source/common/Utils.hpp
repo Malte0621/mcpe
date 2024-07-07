@@ -32,6 +32,10 @@
 #pragma warning (disable : 4068)
 #endif
 
+#ifdef _MSC_VER
+#pragma warning (disable : 4068)
+#endif
+
 #if defined(_WIN32)
 
 // Do we even need all this WinSock stuff anymore?

@@ -12,13 +12,13 @@
 #include "client/renderer/FoliageColor.hpp"
 #include "client/renderer/GrassColor.hpp"
 
-#define C_OPTION_ITEM_HEIGHT (20)
+#define C_OPTION_ITEM_HEIGHT (18)
 
-#define C_ON_OFF_SWITCH_WIDTH (32)
-#define C_ON_OFF_SWITCH_HEIGHT (18)
+#define C_ON_OFF_SWITCH_WIDTH (28)
+#define C_ON_OFF_SWITCH_HEIGHT (16)
 
 #define C_DISTANCE_SWITCH_WIDTH (60)
-#define C_DISTANCE_SWITCH_HEIGHT (18)
+#define C_DISTANCE_SWITCH_HEIGHT (16)
 
 BooleanOptionItem::BooleanOptionItem(bool* pValue, const std::string& text)
 {
