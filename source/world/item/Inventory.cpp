@@ -76,9 +76,18 @@ void Inventory::prepareCreativeInventory()
 
 	// items
 	addCreativeItem(Item::camera->m_itemID);
+	addCreativeItem(Item::rocket->m_itemID);
+
+	// redstone stuff
 	addCreativeItem(Item::door_wood->m_itemID);
 	addCreativeItem(Item::door_iron->m_itemID);
-	addCreativeItem(Item::rocket->m_itemID);
+	addCreativeItem(Item::redStone->m_itemID);
+	addCreativeItem(Tile::notGate->m_ID);
+	addCreativeItem(Tile::lever->m_ID);
+	addCreativeItem(Tile::button->m_ID);
+	addCreativeItem(Tile::plate_stone->m_ID);
+	addCreativeItem(Tile::plate_wood->m_ID);
+	addCreativeItem(Item::diode->m_itemID);
 
 	for (int i = 0; i < C_MAX_HOTBAR_ITEMS; i++)
 		m_hotbar[i] = i;

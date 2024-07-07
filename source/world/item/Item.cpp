@@ -13,6 +13,9 @@
 #include "TileItem.hpp"
 #include "TilePlanterItem.hpp"
 #include "RocketItem.hpp"
+#include "RedstoneItem.hpp"
+
+#include "world/tile/Tile.hpp"
 
 #define ITEM(x) ((x) - 256)
 
@@ -158,7 +161,7 @@ void Item::initItems()
 		->setIcon(9, 3)
 		->setDescriptionId("clay");
 
-	Item::reeds = NEW_X_ITEM(TilePlanterItem, ITEM_REEDS, TILE_REEDS)
+	Item::reeds = NEW_X_ITEM(TilePlanterItem, ITEM_REEDS, Tile::reeds->m_ID)
 		->setIcon(11, 1)
 		->setDescriptionId("reeds");
 
@@ -199,6 +202,14 @@ void Item::initItems()
 	Item::rocket = NEW_X_ITEMN(RocketItem, ITEM_ROCKET)
 		->setIcon(14, 2)
 		->setDescriptionId("rocket");
+
+	Item::redStone = NEW_X_ITEMN(RedstoneItem, ITEM_REDSTONE)
+		->setIcon(8, 3)
+		->setDescriptionId("redstone");
+
+	Item::diode = NEW_X_ITEM(TilePlanterItem, ITEM_DIODE, Tile::repeater_off->m_ID) // Yeah, I found that weird too.
+		->setIcon(6, 5)
+		->setDescriptionId("diode");
 }
 
 int Item::getIcon(ItemInstance* pInstance)

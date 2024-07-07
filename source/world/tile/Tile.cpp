@@ -47,8 +47,13 @@
 #include "DoorTile.hpp"
 #include "SpongeTile.hpp"
 #include "BookshelfTile.hpp"
-#include "WireTile.hpp"
 #include "RocketLauncherTile.hpp"
+#include "WireTile.hpp"
+#include "RedStoneTorchTile.hpp"
+#include "LeverTile.hpp"
+#include "ButtonTile.hpp"
+#include "PressurePlateTile.hpp"
+#include "DiodeTile.hpp"
 
 std::string Tile::TILE_DESCRIPTION_PREFIX = "tile.";
 
@@ -704,6 +709,61 @@ void Tile::initTiles()
 		->setSoundType(Tile::SOUND_STONE)
 		->setDescriptionId("rocketLauncher");
 
+	Tile::wire = (new WireTile(TILE_WIRE))
+		->init()
+		->setDestroyTime(0.0f)
+		->setSoundType(Tile::SOUND_NORMAL)
+		->setDescriptionId("wire");
+
+	Tile::notGate_off = (new RedStoneTorchTile(TILE_NOT_GATE_OFF, TEXTURE_TORCH_RED_STONE_OFF, Material::decoration))
+		->init()
+		->setDestroyTime(0.0f)
+		->setSoundType(Tile::SOUND_WOOD)
+		->setDescriptionId("notGate");
+
+	Tile::notGate = (new RedStoneTorchTile(TILE_NOT_GATE_ON, TEXTURE_TORCH_RED_STONE, Material::decoration))
+		->init()
+		->setDestroyTime(0.0f)
+		->setSoundType(Tile::SOUND_WOOD)
+		->setDescriptionId("notGateLit");
+
+	Tile::lever = (new LeverTile(TILE_LEVER, TEXTURE_LEVER, Material::decoration))
+		->init()
+		->setDestroyTime(0.0f)
+		->setSoundType(Tile::SOUND_WOOD)
+		->setDescriptionId("lever");
+
+	Tile::button = (new ButtonTile(TILE_BUTTON_STONE, Tile::rock->m_TextureFrame))
+		->init()
+		->setDestroyTime(0.5f)
+		->setSoundType(Tile::SOUND_STONE)
+		->setDescriptionId("button");
+
+	Tile::plate_stone = (new PressurePlateTile(TILE_PLATE_STONE, Tile::rock->m_TextureFrame, PressurePlateTile::CHECK_MOBS, Material::stone))
+		->init()
+		->setDestroyTime(0.5f)
+		->setSoundType(Tile::SOUND_STONE)
+		->setDescriptionId("pressurePlate");
+
+	Tile::plate_wood = (new PressurePlateTile(TILE_PLATE_WOOD, Tile::wood->m_TextureFrame, PressurePlateTile::CHECK_EVERYTHING, Material::wood))
+		->init()
+		->setDestroyTime(0.5f)
+		->setSoundType(Tile::SOUND_STONE)
+		->setDescriptionId("pressurePlate");
+
+	Tile::repeater_off = (new DiodeTile(TILE_REPEATER_OFF, false))
+		->init()
+		->setDestroyTime(0.0f)
+		->setSoundType(Tile::SOUND_WOOD)
+		->setDescriptionId("diode");
+
+	Tile::repeater_on = (new DiodeTile(TILE_REPEATER_ON, true))
+		->init()
+		->setDestroyTime(0.0f)
+		->setLightEmission(0.625f)
+		->setSoundType(Tile::SOUND_WOOD)
+		->setDescriptionId("diode");
+
 	for (int i = 0; i < C_MAX_TILES; i++)
 	{
 		if (Tile::tiles[i])
@@ -951,7 +1011,7 @@ int Tile::getSignal(LevelSource* pLevel, int x, int y, int z, int dir)
 	return 0;
 }
 
-int Tile::getDirectSignal(Level* pLevel, int x, int y, int z, int dir)
+int Tile::getDirectSignal(LevelSource* pLevel, int x, int y, int z, int dir)
 {
 	return 0;
 }
@@ -1152,4 +1212,13 @@ Tile
 	*Tile::bookshelf,
 	*Tile::mossStone,
 	*Tile::cryingObsidian,
-	*Tile::rocketLauncher;
+	*Tile::rocketLauncher,
+	*Tile::wire,
+	*Tile::notGate_off,
+	*Tile::notGate,
+	*Tile::lever,
+	*Tile::button,
+	*Tile::plate_stone,
+	*Tile::plate_wood,
+	*Tile::repeater_off,
+	*Tile::repeater_on;
