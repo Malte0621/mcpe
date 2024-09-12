@@ -454,6 +454,23 @@ bool Level::hasNeighborSignal(int x, int y, int z)
 	return false;
 }
 
+#ifdef INFWORLDS
+
+std::vector<LevelChunk*> Level::getLoadedChunks() {
+	std::vector<LevelChunk*> loadedChunks;
+
+	if (m_pChunkSource) {
+		ChunkCache* cache = dynamic_cast<ChunkCache*>(m_pChunkSource);
+		if (cache) {
+			loadedChunks = cache->getLoadedChunks();
+		}
+	}
+
+	return loadedChunks;
+}
+
+#endif // INFWORLDS
+
 bool Level::hasChunkAt(int gx, int gy, int gz)
 {
 	return hasChunk(gx >> 4, gz >> 4);
@@ -944,10 +961,13 @@ int Level::getTopSolidBlock(int x, int z)
 
 	while (true)
 	{
-		if (!getMaterial(x, y, z)->blocksMotion())
+		Material* pMtl = getMaterial(x, y, z);
+		if (pMtl == nullptr || !pMtl->blocksMotion())
 			break;
+
 		if (!y)
 			return -1;
+
 		y--;
 	}
 
@@ -958,14 +978,16 @@ int Level::getTopSolidBlock(int x, int z)
 	while (true)
 	{
 		TileID tile = pChunk->getTile(cx, y, cz);
-		if (tile)
+		if (tile && Tile::tiles[tile] != nullptr)
 		{
-			if (Tile::tiles[tile]->m_pMaterial->blocksMotion())
+			Material* pTileMaterial = Tile::tiles[tile]->m_pMaterial;
+			if (pTileMaterial->blocksMotion())
 				return y + 1;
 			
-			if (Tile::tiles[tile]->m_pMaterial->isLiquid())
+			if (pTileMaterial->isLiquid())
 				break;
 		}
+
 		if (!--y)
 			return -1;
 	}

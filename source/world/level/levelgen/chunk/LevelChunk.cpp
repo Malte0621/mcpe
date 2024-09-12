@@ -663,7 +663,7 @@ bool LevelChunk::setTileAndData(int x, int y, int z, TileID tile, int data)
 
 	if (oldTile == tile)
 	{
-		// make sure we're at least updating the data. If not, simply return false
+		// Make sure we're at least updating the data. If not, simply return false
 		if (getData(x, y, z) == data)
 			return false;
 	}
@@ -676,7 +676,7 @@ bool LevelChunk::setTileAndData(int x, int y, int z, TileID tile, int data)
 		Tile::tiles[oldTile]->onRemove(m_pLevel, globalX, y, globalZ);
 	}
 
-	// update the data value of the block
+	// Update the data value of the block
 	if (index & 1)
 		m_tileData[index >> 1] = (m_tileData[index >> 1] & 0x0F) | (data << 4);
 	else
@@ -702,7 +702,7 @@ bool LevelChunk::setTileAndData(int x, int y, int z, TileID tile, int data)
 	m_pLevel->updateLight(LightLayer::Block, globalX, y, globalZ, globalX, y, globalZ);
 
 	lightGaps(x, z);
-	if (tile)
+	if (tile && Tile::tiles[tile] != nullptr)
 	{
 		if (!m_pLevel->m_bIsMultiplayer)
 			Tile::tiles[tile]->onPlace(m_pLevel, globalX, y, globalZ);

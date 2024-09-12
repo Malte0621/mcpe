@@ -38,7 +38,6 @@ void RegionFile::close()
 bool RegionFile::open()
 {
 	close();
-	memset(field_20, 0, 1024 * sizeof(int));
 	
 	m_pFile = fopen(m_fileName.c_str(), "r+b");
 	if (m_pFile)
@@ -85,14 +84,29 @@ bool RegionFile::readChunk(int x, int z, RakNet::BitStream** pBitStream)
 
 	int length = 0;
 	fseek(m_pFile, thing * SECTOR_BYTES, SEEK_SET);
-	fread(&length, sizeof(int), 1, m_pFile);
 	
-	assert(length < ((offset & 0xff) * SECTOR_BYTES));
+	if (fread(&length, sizeof(int), 1, m_pFile) != 1) {
+		return false;
+	}
+
+	if (length <= 0 || length >= ((offset & 0xff) * SECTOR_BYTES)) {
+		return false;
+	}
 
 	length -= 4;
 
-	uint8_t* data = new uint8_t[length];
-	READ(data, 1, length, m_pFile);
+	uint8_t* data = nullptr;
+	try {
+		data = new uint8_t[length];
+	}
+	catch (const std::bad_alloc& e) {
+		return false;
+	}
+
+	if (fread(data, 1, length, m_pFile) != length) {
+		delete[] data;
+		return false;
+	}
 
 	*pBitStream = new RakNet::BitStream(data, length, false);
 	return true;
