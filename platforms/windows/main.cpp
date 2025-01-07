@@ -7,7 +7,7 @@
  ********************************************************************/
 
 #include <cstdarg>
-#include <windowsx.h>
+#include <WindowsX.h>
 
 #include "thirdparty/GL/GL.hpp"
 #include "compat/KeyCodes.hpp"
@@ -18,7 +18,6 @@
 #include "client/player/input/Multitouch.hpp"
 
 #include "AppPlatform_win32.hpp"
-#include "LoggerWin32.hpp"
 
 LPCTSTR g_WindowClassName = TEXT("MCPEClass");
 
@@ -142,10 +141,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 #endif
 
 	SetInstance(hInstance);
-
-	// This initializes the Logger singleton to use the Windows-specific variant
-	// If we didn't initialize it here, the Minecraft class would have our back
-	Logger::setSingleton(new LoggerWin32);
 
 	// register the window class:
 	WNDCLASS wc;

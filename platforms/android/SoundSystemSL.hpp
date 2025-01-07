@@ -30,8 +30,6 @@
 
 typedef std::list<SLObjectItf> SLSoundList;
 
-#define SOUND_SYSTEM SoundSystemSL
-
 class SoundSystemSL : public SoundSystem
 {
 public:

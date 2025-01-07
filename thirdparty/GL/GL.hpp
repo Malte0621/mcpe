@@ -130,7 +130,7 @@ void xglDrawArrays(GLenum mode, GLint first, GLsizei count);
 
 #endif
 
-#if defined(_WIN32) && !defined(USE_GLES1_COMPATIBILITY_LAYER)
+#ifdef _WIN32
 // Win32 defines xglOrthof as a regular function
 #elif defined USE_GL_ORTHO_F
 #define xglOrthof glOrthof

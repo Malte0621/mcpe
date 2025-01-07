@@ -8,7 +8,7 @@
 
 #pragma once
 #include <string>
-#include <windows.h>
+#include <Windows.h>
 #include <uuids.h>
 #include <strmif.h>
 #include <stdexcept>
@@ -50,5 +50,3 @@ private:
 	LPDIRECTSOUND3DLISTENER m_listener;
 	std::vector<BufferInfo> m_buffers;
 };
-
-#define SOUND_SYSTEM SoundSystemDS

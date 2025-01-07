@@ -13,7 +13,6 @@
 
 #include "client/renderer/Texture.hpp"
 #include "client/sound/SoundSystem.hpp"
-#include "AssetFile.hpp"
 
 class AppPlatform
 {
@@ -83,8 +82,6 @@ public:
 	virtual std::string getPatchData();
 	virtual void initSoundSystem();
 	virtual SoundSystem* const getSoundSystem() const;
-	// Used For Sounds
-	virtual AssetFile readAssetFile(const std::string&) const;
 #endif
 
 public:

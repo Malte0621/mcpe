@@ -106,17 +106,6 @@ extern "C" void resize_from_js(int new_width, int new_height)
 }
 #endif
 
-// DirectSound Support
-#ifdef _WIN32
-HWND GetHWND()
-{
-	SDL_SysWMinfo wmInfo;
-	SDL_VERSION(&wmInfo.version);
-	SDL_GetWindowWMInfo(window, &wmInfo);
-	return wmInfo.info.win.window;
-}
-#endif
-
 // Handle Events
 static bool window_resized = false;
 static void handle_events()
@@ -316,10 +305,6 @@ void CheckOptionalTextureAvailability()
 // Main
 int main(int argc, char *argv[])
 {
-	// Setup Logging
-	Logger::setSingleton(new Logger);
-
-	// Setup SDL
 	if (SDL_Init(SDL_INIT_VIDEO) < 0)
 	{
 		LOG_E("Unable To Initialize SDL: %s", SDL_GetError());
@@ -353,7 +338,7 @@ int main(int argc, char *argv[])
 	window = SDL_CreateWindow("ReMinecraftPE", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, Minecraft::width, Minecraft::height, flags);
 	if (!window)
 	{
-		LOG_E("Unable to create SDL window: %s", SDL_GetError());
+		LOG_E("Unable to create SDL window");
 		exit(EXIT_FAILURE);
 	}
 
@@ -367,7 +352,7 @@ int main(int argc, char *argv[])
 		exit(EXIT_FAILURE);
 	}
 
-#if defined(_WIN32) && !defined(USE_GLES1_COMPATIBILITY_LAYER)
+#ifdef _WIN32
 	xglInit();
 
 	if (!xglInitted())
@@ -381,7 +366,7 @@ int main(int argc, char *argv[])
 
 	// Setup Compatibility Layer If Needed
 #ifdef USE_GLES1_COMPATIBILITY_LAYER
-	init_gles_compatibility_layer(SDL_GL_GetProcAddress);
+	init_gles_compatibility_layer();
 #endif
 
 	// Setup Teardown

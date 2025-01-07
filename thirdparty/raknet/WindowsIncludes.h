@@ -16,9 +16,9 @@
 #include <winsockx.h>
 #elif defined (_WIN32) && !defined(WINDOWS_PHONE_8) && !defined(WINDOWS_STORE_RT)
 #define _WINPC
-#include <winsock2.h>
+#include <WinSock2.h>
 #include <windows.h>
-#include <ws2tcpip.h>
+#include <Ws2tcpip.h>
 
 // Must always include Winsock2.h before windows.h
 // or else:
