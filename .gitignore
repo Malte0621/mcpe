@@ -127,7 +127,7 @@ xcuserdata/
 /sound_data
 
 # Ignore linux/mingw build artifacts.
-/build
+/build*
 /minecraftcpp
 /minecraftcpp.exe
 
@@ -211,3 +211,12 @@ xcuserdata/
 /game/assets/gui/feedback_outer.png
 /game/assets/snow.png
 /game/assets/mob/pig.png
+
+# CLion
+/.idea
+/cmake-build-*
+
+# Sound
+/tools/__pycache__
+/tools/venv
+/game/assets/sound
